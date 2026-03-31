@@ -54,7 +54,6 @@ Item { // Bar content region
             top: parent.top
             bottom: parent.bottom
             left: parent.left
-            right: middleSection.left
         }
         implicitWidth: leftSectionRowLayout.implicitWidth
         implicitHeight: Appearance.sizes.baseBarHeight
@@ -89,90 +88,29 @@ Item { // Bar content region
                 colBackground: barLeftSideMouseArea.hovered ? Appearance.colors.colLayer1Hover : ColorUtils.transparentize(Appearance.colors.colLayer1Hover, 1)
             }
 
-            ActiveWindow {
-                Layout.leftMargin: 10 + (leftSidebarButton.visible ? 0 : Appearance.rounding.screenRounding)
-                Layout.rightMargin: Appearance.rounding.screenRounding
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-                visible: root.useShortenedForm === 0
-            }
-        }
-    }
+            BarGroup {
+                Layout.alignment: Qt.AlignVCenter
+                Layout.leftMargin: 10
+                padding: workspacesWidget.widgetPadding
 
-    Row { // Middle section
-        id: middleSection
-        anchors {
-            top: parent.top
-            bottom: parent.bottom
-            horizontalCenter: parent.horizontalCenter
-        }
-        spacing: 4
-
-        BarGroup {
-            id: leftCenterGroup
-            anchors.verticalCenter: parent.verticalCenter
-            implicitWidth: root.centerSideModuleWidth
-
-            Resources {
-                alwaysShowAllResources: root.useShortenedForm === 2
-                Layout.fillWidth: root.useShortenedForm === 2
-            }
-
-            Media {
-                visible: root.useShortenedForm < 2
-                Layout.fillWidth: true
-            }
-        }
-
-        VerticalBarSeparator {
-            visible: Config.options?.bar.borderless
-        }
-
-        BarGroup {
-            id: middleCenterGroup
-            anchors.verticalCenter: parent.verticalCenter
-            padding: workspacesWidget.widgetPadding
-
-            Workspaces {
-                id: workspacesWidget
-                Layout.fillHeight: true
-                MouseArea {
-                    // Right-click to toggle overview
-                    anchors.fill: parent
-                    acceptedButtons: Qt.RightButton
-
-                    onPressed: event => {
-                        if (event.button === Qt.RightButton) {
-                            GlobalStates.overviewOpen = !GlobalStates.overviewOpen;
+                Workspaces {
+                    id: workspacesWidget
+                    Layout.fillHeight: true
+                    MouseArea {
+                        anchors.fill: parent
+                        acceptedButtons: Qt.RightButton
+                        onPressed: event => {
+                            if (event.button === Qt.RightButton) {
+                                GlobalStates.overviewOpen = !GlobalStates.overviewOpen;
+                            }
                         }
                     }
                 }
             }
-        }
-
-        VerticalBarSeparator {
-            visible: Config.options?.bar.borderless
-        }
-
-        MouseArea {
-            id: rightCenterGroup
-            anchors.verticalCenter: parent.verticalCenter
-            implicitWidth: root.centerSideModuleWidth
-            implicitHeight: rightCenterGroupContent.implicitHeight
-
-            onPressed: {
-                GlobalStates.sidebarRightOpen = !GlobalStates.sidebarRightOpen;
-            }
 
             BarGroup {
-                id: rightCenterGroupContent
-                anchors.fill: parent
-
-                ClockWidget {
-                    showDate: (Config.options.bar.verbose && root.useShortenedForm < 2)
-                    Layout.alignment: Qt.AlignVCenter
-                    Layout.fillWidth: true
-                }
+                Layout.alignment: Qt.AlignVCenter
+                Layout.leftMargin: 4
 
                 UtilButtons {
                     visible: (Config.options.bar.verbose && root.useShortenedForm === 0)
@@ -187,13 +125,72 @@ Item { // Bar content region
         }
     }
 
+    Item { // Middle section
+        id: middleSection
+        anchors {
+            top: parent.top
+            bottom: parent.bottom
+            horizontalCenter: parent.horizontalCenter
+        }
+        width: root.centerSideModuleWidth * 4 + 8
+
+        BarGroup {
+            id: leftCenterGroup
+            anchors.left: parent.left
+            anchors.leftMargin: Math.max(0, barLeftSideMouseArea.width - middleSection.x + 4)
+            anchors.right: clockGroup.left
+            anchors.rightMargin: 4
+            anchors.verticalCenter: parent.verticalCenter
+
+            Media {
+                visible: root.useShortenedForm < 2
+                Layout.fillWidth: true
+            }
+        }
+
+        MouseArea {
+            id: clockGroup
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.verticalCenter: parent.verticalCenter
+            width: root.centerSideModuleWidth
+            height: clockGroupContent.implicitHeight
+
+            onPressed: {
+                GlobalStates.sidebarRightOpen = !GlobalStates.sidebarRightOpen;
+            }
+
+            BarGroup {
+                id: clockGroupContent
+                anchors.fill: parent
+
+                ClockWidget {
+                    showDate: (Config.options.bar.verbose && root.useShortenedForm < 2)
+                    Layout.alignment: Qt.AlignVCenter
+                    Layout.fillWidth: true
+                }
+            }
+        }
+
+        BarGroup {
+            id: rightCenterGroup
+            anchors.left: clockGroup.right
+            anchors.leftMargin: 4
+            anchors.verticalCenter: parent.verticalCenter
+            width: root.centerSideModuleWidth
+
+            Resources {
+                alwaysShowAllResources: root.useShortenedForm === 2
+                Layout.fillWidth: root.useShortenedForm === 2
+            }
+        }
+    }
+
     FocusedScrollMouseArea { // Right side | scroll to change volume
         id: barRightSideMouseArea
 
         anchors {
             top: parent.top
             bottom: parent.bottom
-            left: middleSection.right
             right: parent.right
         }
         implicitWidth: rightSectionRowLayout.implicitWidth
@@ -317,18 +314,6 @@ Item { // Bar content region
                 }
             }
 
-            SysTray {
-                visible: root.useShortenedForm === 0
-                Layout.fillWidth: false
-                Layout.fillHeight: true
-                invertSide: Config?.options.bar.bottom
-            }
-
-            Item {
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-            }
-
             // Weather
             Loader {
                 Layout.leftMargin: 4
@@ -337,6 +322,19 @@ Item { // Bar content region
                 sourceComponent: BarGroup {
                     WeatherBar {}
                 }
+            }
+
+            SysTray {
+                visible: root.useShortenedForm === 0
+                Layout.fillWidth: false
+                Layout.fillHeight: true
+                invertSide: Config?.options.bar.bottom
+            }
+
+            // Monitors
+            BarGroup {
+                Layout.leftMargin: 4
+                Monitors {}
             }
         }
     }

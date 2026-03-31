@@ -839,27 +839,27 @@ fi
 
 log_info "Current branch: $current_branch"
 
-if ! git diff --quiet || ! git diff --cached --quiet; then
-  log_warning "You have uncommitted changes:"
-  git status --short
-  echo
+# if ! git diff --quiet || ! git diff --cached --quiet; then
+#   log_warning "You have uncommitted changes:"
+#   git status --short
+#   echo
 
-  if ! safe_read "Do you want to continue? This will stash your changes. (y/N): " response "N"; then
-    echo
-    log_error "Failed to read input. Aborting."
-    exit 1
-  fi
+#   if ! safe_read "Do you want to continue? This will stash your changes. (y/N): " response "N"; then
+#     echo
+#     log_error "Failed to read input. Aborting."
+#     exit 1
+#   fi
 
-  if [[ ! "$response" =~ ^[Yy]$ ]]; then
-    log_die "Aborted by user"
-  fi
-  if [[ "$DRY_RUN" == true ]]; then
-    log_info "[DRY-RUN] Would stash changes"
-  else
-    git stash push -m "Auto-stash before update $(date)"
-    log_info "Changes stashed"
-  fi
-fi
+#   if [[ ! "$response" =~ ^[Yy]$ ]]; then
+#     log_die "Aborted by user"
+#   fi
+#   if [[ "$DRY_RUN" == true ]]; then
+#     log_info "[DRY-RUN] Would stash changes"
+#   else
+#     git stash push -m "Auto-stash before update $(date)"
+#     log_info "Changes stashed"
+#   fi
+# fi
 
 if git remote get-url origin &>/dev/null; then
   log_info "Pulling changes from origin/$current_branch..."
