@@ -45,30 +45,29 @@ StyledPopup {
         }
 
         Column {
-            visible: ResourceUsage.swapTotal > 0
             anchors.top: parent.top
             spacing: 8
 
             StyledPopupHeaderRow {
-                icon: "swap_horiz"
-                label: "Swap"
+                icon: "hard_drive"
+                label: "Disk"
             }
             Column {
                 spacing: 4
                 StyledPopupValueRow {
                     icon: "clock_loader_60"
                     label: Translation.tr("Used:")
-                    value: root.formatKB(ResourceUsage.swapUsed)
+                    value: root.formatKB(ResourceUsage.diskUsed / 1024)
                 }
                 StyledPopupValueRow {
                     icon: "check_circle"
                     label: Translation.tr("Free:")
-                    value: root.formatKB(ResourceUsage.swapFree)
+                    value: root.formatKB((ResourceUsage.diskTotal - ResourceUsage.diskUsed) / 1024)
                 }
                 StyledPopupValueRow {
                     icon: "empty_dashboard"
                     label: Translation.tr("Total:")
-                    value: root.formatKB(ResourceUsage.swapTotal)
+                    value: root.formatKB(ResourceUsage.diskTotal / 1024)
                 }
             }
         }
@@ -87,6 +86,34 @@ StyledPopup {
                     icon: "bolt"
                     label: Translation.tr("Load:")
                     value: `${Math.round(ResourceUsage.cpuUsage * 100)}%`
+                }
+                StyledPopupValueRow {
+                    icon: "thermostat"
+                    label: Translation.tr("Temp:")
+                    value: ResourceUsage.cpuTempString
+                }
+            }
+        }
+
+        Column {
+            anchors.top: parent.top
+            spacing: 8
+
+            StyledPopupHeaderRow {
+                icon: "developer_board"
+                label: "GPU"
+            }
+            Column {
+                spacing: 4
+                StyledPopupValueRow {
+                    icon: "bolt"
+                    label: Translation.tr("Load:")
+                    value: `${Math.round(ResourceUsage.gpuUsage * 100)}%`
+                }
+                StyledPopupValueRow {
+                    icon: "thermostat"
+                    label: Translation.tr("Temp:")
+                    value: ResourceUsage.gpuTempString
                 }
             }
         }

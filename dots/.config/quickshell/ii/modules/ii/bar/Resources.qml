@@ -26,13 +26,13 @@ MouseArea {
         }
 
         Resource {
-            iconName: "swap_horiz"
-            percentage: ResourceUsage.swapUsedPercentage
-            shown: (Config.options.bar.resources.alwaysShowSwap && percentage > 0) || 
-                (MprisController.activePlayer?.trackTitle == null) ||
+            iconName: "hard_drive"
+            percentage: ResourceUsage.diskUsedPercentage
+            shown: Config.options.bar.resources.alwaysShowDisk || 
+                !(MprisController.activePlayer?.trackTitle?.length > 0) ||
                 root.alwaysShowAllResources
             Layout.leftMargin: shown ? 6 : 0
-            warningThreshold: Config.options.bar.resources.swapWarningThreshold
+            warningThreshold: Config.options.bar.resources.diskWarningThreshold
         }
 
         Resource {
@@ -45,6 +45,15 @@ MouseArea {
             warningThreshold: Config.options.bar.resources.cpuWarningThreshold
         }
 
+        Resource {
+            iconName: "developer_board"
+            percentage: ResourceUsage.gpuUsage
+            shown: Config.options.bar.resources.alwaysShowGpu || 
+                !(MprisController.activePlayer?.trackTitle?.length > 0) ||
+                root.alwaysShowAllResources
+            Layout.leftMargin: shown ? 6 : 0
+            warningThreshold: Config.options.bar.resources.gpuWarningThreshold
+        }
     }
 
     ResourcesPopup {
