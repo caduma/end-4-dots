@@ -6,28 +6,27 @@ import QtQuick.Layouts
 
 MouseArea {
     id: root
-    implicitWidth: rowLayout.implicitWidth + rowLayout.anchors.leftMargin + rowLayout.anchors.rightMargin
+    property bool hovered: false
+    implicitWidth: rowLayout.implicitWidth + 10 * 2
     implicitHeight: Appearance.sizes.barHeight
+
+    acceptedButtons: Qt.LeftButton | Qt.RightButton
     hoverEnabled: !Config.options.bar.tooltips.clickToShow
 
     RowLayout {
         id: rowLayout
-        spacing: 2
-        anchors.fill: parent
-        anchors.leftMargin: 4
-        anchors.rightMargin: 4
+        anchors.centerIn: parent
 
         MaterialSymbol {
             fill: 0
             text: "monitor"
             iconSize: Appearance.font.pixelSize.large
-            font.weight: Font.DemiBold
-            color: Appearance.m3colors.m3onSecondaryContainer
+            color: Appearance.colors.colOnLayer1
             Layout.alignment: Qt.AlignVCenter
         }
 
         StyledText {
-            Layout.alignment: Qt.AlignVCenter
+            visible: true
             font.pixelSize: Appearance.font.pixelSize.small
             color: Appearance.colors.colOnLayer1
             text: {
@@ -35,10 +34,11 @@ MouseArea {
                 const enabled = HyprlandData.monitors.filter(m => !m.disabled).length;
                 return total === 1 ? `${Math.round(HyprlandData.monitors[0]?.refreshRate ?? 0)}Hz` : `${enabled}/${total}`;
             }
+            Layout.alignment: Qt.AlignVCenter
         }
     }
 
-    MonitorsPopup {
+    MonitorPopup {
         hoverTarget: root
     }
 }

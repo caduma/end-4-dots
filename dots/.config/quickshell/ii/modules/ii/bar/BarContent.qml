@@ -1,4 +1,5 @@
 import qs.modules.ii.bar.weather
+import qs.modules.ii.bar.monitors
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
@@ -172,15 +173,39 @@ Item { // Bar content region
         }
 
         BarGroup {
-            id: rightCenterGroup
+            id: weatherGroup
             anchors.left: clockGroup.right
             anchors.leftMargin: 4
             anchors.verticalCenter: parent.verticalCenter
-            width: root.centerSideModuleWidth
+
+            WeatherBar {}
+
+            // Loader {
+            //     active: Config.options.bar.weather.enable
+            //     sourceComponent: BarGroup {
+            //         WeatherBar {}
+            //     }
+            // }
+        }
+
+        BarGroup {
+            id: monitorsGroup
+            anchors.left: weatherGroup.right
+            anchors.leftMargin: 4
+            anchors.verticalCenter: parent.verticalCenter
+
+            MonitorBar {}
+        }
+
+        BarGroup {
+            id: resourcesGroup
+            anchors.left: monitorsGroup.right
+            anchors.leftMargin: 4
+            anchors.verticalCenter: parent.verticalCenter
 
             Resources {
                 alwaysShowAllResources: root.useShortenedForm === 2
-                Layout.fillWidth: root.useShortenedForm === 2
+                visible: root.useShortenedForm < 2
             }
         }
     }
@@ -314,27 +339,11 @@ Item { // Bar content region
                 }
             }
 
-            // Weather
-            Loader {
-                Layout.leftMargin: 4
-                active: Config.options.bar.weather.enable
-
-                sourceComponent: BarGroup {
-                    WeatherBar {}
-                }
-            }
-
             SysTray {
                 visible: root.useShortenedForm === 0
                 Layout.fillWidth: false
                 Layout.fillHeight: true
                 invertSide: Config?.options.bar.bottom
-            }
-
-            // Monitors
-            BarGroup {
-                Layout.leftMargin: 4
-                Monitors {}
             }
         }
     }
