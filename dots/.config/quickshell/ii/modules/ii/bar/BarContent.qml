@@ -139,11 +139,14 @@ Item { // Bar content region
             id: leftCenterGroup
             anchors.left: parent.left
             anchors.leftMargin: Math.max(0, barLeftSideMouseArea.width - middleSection.x + 4)
+            anchors.right: clockGroup.left
+            anchors.rightMargin: 4
             anchors.verticalCenter: parent.verticalCenter
-            width: Math.min(implicitWidth, root.centerSideModuleWidth * 2)
+            // width: Math.min(implicitWidth, root.centerSideModuleWidth * 2)
 
             Media {
                 visible: root.useShortenedForm < 2
+                Layout.fillWidth: true
             }
         }
 

@@ -36,7 +36,7 @@ LazyLoader {
         margins {
             left: {
                 if (!Config.options.bar.vertical) return root.QsWindow?.mapFromItem(
-                    root.hoverTarget, 
+                    root.hoverTarget,
                     (root.hoverTarget.width - popupBackground.implicitWidth) / 2, 0
                 ).x;
                 return Appearance.sizes.verticalBarWidth
@@ -44,7 +44,7 @@ LazyLoader {
             top: {
                 if (!Config.options.bar.vertical) return Appearance.sizes.barHeight;
                 return root.QsWindow?.mapFromItem(
-                    root.hoverTarget, 
+                    root.hoverTarget,
                     (root.hoverTarget.height - popupBackground.implicitHeight) / 2, 0
                 ).y;
             }
@@ -53,6 +53,10 @@ LazyLoader {
         }
         WlrLayershell.namespace: "quickshell:popup"
         WlrLayershell.layer: WlrLayer.Overlay
+
+        HoverHandler {
+            onHoveredChanged: root._popupHovered = hovered
+        }
 
         StyledRectangularShadow {
             target: popupBackground

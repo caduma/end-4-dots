@@ -13,6 +13,12 @@ MouseArea {
     acceptedButtons: Qt.LeftButton | Qt.RightButton
     hoverEnabled: !Config.options.bar.tooltips.clickToShow
 
+    onPressed: (event) => {
+        if (event.button === Qt.LeftButton) {
+            GlobalStates.monitorControlsOpen = !GlobalStates.monitorControlsOpen;
+        }
+    }
+
     RowLayout {
         id: rowLayout
         anchors.centerIn: parent
@@ -33,10 +39,14 @@ MouseArea {
                 const monitors = HyprlandData.monitors;
                 const total = monitors.length;
                 
-                return monitors.map((m, index) => {
-                    const hz = Math.round(m.refreshRate ?? 0);
-                    return `${hz}Hz (${index + 1}/${total})`;
-                }).join(" and ");
+                // Find the monitor data that matches the current screen's name
+                // (Hyprland names like "DP-1", "HDMI-A-1", etc., usually match Screen.name)
+                const currentMonitor = monitors.find(m => m.name === Screen.name) || monitors[0];
+                const currentIndex = monitors.indexOf(currentMonitor);
+                
+                const hz = Math.round(currentMonitor?.refreshRate ?? 0);
+                
+                return `monitor ${currentIndex + 1}: ${hz}hz (${currentIndex + 1}/${total})`;
             }
             Layout.alignment: Qt.AlignVCenter
         }
